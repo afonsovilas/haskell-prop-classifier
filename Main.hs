@@ -93,5 +93,13 @@ eval sbt (Not p) = not (eval sbt p)
 eval sbt (And p1 p2) = (eval sbt p1) && (eval sbt p2)
 eval sbt (Or p1 p2) = (eval sbt p1) || (eval sbt p2)
 
+classify :: Prop -> String
+classify p
+  | and results = "TAUTOLOGY"
+  | not (or results) = "CONTRADICTION"
+  | otherwise = "CONTINGENT"
+  where
+    results = map (\s -> eval s p) (substs p)
+
 main :: IO ()
 main = return ()
