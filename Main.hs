@@ -25,6 +25,32 @@ constant =
       char 'F'
       return (Const False)
 
+term :: Parser Prop
+term = do
+  f <- factor
+  termCont f
+
+termCont :: Prop -> Parser Prop
+termCont acc =
+  do
+    char '&'
+    f <- factor
+    termCont (And acc f)
+    <|> return acc
+
+prop :: Parser Prop
+prop = do
+  f <- term
+  propCont f
+
+propCont :: Prop -> Parser Prop
+propCont acc =
+  do
+    char '|'
+    f <- term
+    propCont (Or acc f)
+    <|> return acc
+
 factor :: Parser Prop
 factor =
   do
@@ -33,6 +59,11 @@ factor =
     return (Not f)
     <|> name
     <|> constant
+    <|> do
+      char '('
+      p <- prop
+      char ')'
+      return p
 
 main :: IO ()
 main = return ()
