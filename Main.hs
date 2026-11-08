@@ -84,5 +84,14 @@ substs p = map (\x -> zip vs x) (booleans (length vs))
   where
     vs = vars p
 
+eval :: Subst -> Prop -> Bool
+eval _ (Const c) = c
+eval sbt (Var n) = case lookup n sbt of
+  Just value -> value
+  Nothing -> error ("variable not found: " ++ [n])
+eval sbt (Not p) = not (eval sbt p)
+eval sbt (And p1 p2) = (eval sbt p1) && (eval sbt p2)
+eval sbt (Or p1 p2) = (eval sbt p1) || (eval sbt p2)
+
 main :: IO ()
 main = return ()
