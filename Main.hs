@@ -102,4 +102,21 @@ classify p
     results = map (\s -> eval s p) (substs p)
 
 main :: IO ()
-main = return ()
+main =
+  do
+    txt <- getContents
+    classifyProp (lines txt)
+
+-- | read-eval-print loop
+classifyProp :: [String] -> IO ()
+classifyProp [] = return ()
+classifyProp (l : ls) = do
+  putStrLn (evaluate l)
+  classifyProp ls
+
+-- | evaluate a single expression
+evaluate :: String -> String
+evaluate txt =
+  case parse prop txt of
+    [(tree, "")] -> classify tree
+    _ -> "parse error; try again"
